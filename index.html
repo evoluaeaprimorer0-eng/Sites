@@ -315,7 +315,7 @@
 
     .filters {
       display: grid;
-      grid-template-columns: repeat(3, minmax(120px, 1fr));
+      grid-template-columns: repeat(4, minmax(120px, 1fr));
       gap: 10px;
       margin-bottom: 12px;
     }
@@ -354,11 +354,31 @@
     .cart-lines li {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       gap: 10px;
       border: 1px solid rgba(123, 178, 255, 0.2);
       border-radius: 10px;
       padding: 9px;
       font-size: .92rem;
+    }
+
+    .qty-pill {
+      border: 1px solid rgba(123, 178, 255, 0.35);
+      border-radius: 999px;
+      padding: 2px 8px;
+      color: #dce9ff;
+      font-size: .78rem;
+    }
+
+    .remove-item {
+      border: 1px solid rgba(255, 106, 142, 0.35);
+      color: #ffb3c5;
+      background: rgba(255, 106, 142, 0.12);
+      border-radius: 8px;
+      padding: 5px 8px;
+      cursor: pointer;
+      font-size: .8rem;
+      font-weight: 700;
     }
 
     input, select, textarea {
@@ -534,6 +554,7 @@
               <option value="ate80">Até R$ 80</option>
               <option value="acima80">Acima de R$ 80</option>
             </select>
+            <input type="search" id="filterSearch" placeholder="Buscar modelo..." />
           </div>
           <div class="grid-products" id="productGrid"></div>
         </div>
@@ -641,6 +662,8 @@
     const productGrid = document.getElementById('productGrid');
     const cartLines = document.getElementById('cartLines');
     const cartTotal = document.getElementById('cartTotal');
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    const WHATSAPP_NUMBER = '5511999999999';
 
     const productData = [
       { id: 1, nome: 'Chinela Oceano', tipo: 'classica', tamanho: '37-40', preco: 49.9, selo: 'Conforto diário' },
@@ -661,6 +684,7 @@
       const type = document.getElementById('filterType').value;
       const size = document.getElementById('filterSize').value;
       const price = document.getElementById('filterPrice').value;
+      const search = document.getElementById('filterSearch').value.trim().toLowerCase();
 
       return productData.filter(item => {
         const typeOk = type === 'todos' || item.tipo === type;
@@ -669,7 +693,8 @@
           || (price === 'ate50' && item.preco <= 50)
           || (price === 'ate80' && item.preco <= 80)
           || (price === 'acima80' && item.preco > 80);
-        return typeOk && sizeOk && priceOk;
+        const searchOk = !search || item.nome.toLowerCase().includes(search) || item.selo.toLowerCase().includes(search);
+        return typeOk && sizeOk && priceOk && searchOk;
       });
     }
 
@@ -700,17 +725,42 @@
       if (!cart.length) {
         cartLines.innerHTML = '<li><span>Nenhum item ainda</span><strong>—</strong></li>';
         cartTotal.textContent = 'R$ 0,00';
+        checkoutBtn.disabled = true;
+        checkoutBtn.style.opacity = '.6';
+        checkoutBtn.style.cursor = 'not-allowed';
         return;
       }
 
-      cartLines.innerHTML = cart.map((item, index) => `
+      const grouped = cart.reduce((acc, item) => {
+        acc[item.id] ??= { ...item, qty: 0 };
+        acc[item.id].qty += 1;
+        return acc;
+      }, {});
+
+      cartLines.innerHTML = Object.values(grouped).map(item => `
         <li>
-          <span>${item.nome}</span>
-          <strong>${brl(item.preco)}</strong>
+          <span>${item.nome} <b class="qty-pill">x${item.qty}</b></span>
+          <div>
+            <strong>${brl(item.preco * item.qty)}</strong>
+            <button class="remove-item" data-remove-id="${item.id}" title="Remover uma unidade">-1</button>
+          </div>
         </li>
       `).join('');
+
+      document.querySelectorAll('[data-remove-id]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = Number(btn.dataset.removeId);
+          const pos = cart.findIndex(item => item.id === id);
+          if (pos >= 0) cart.splice(pos, 1);
+          renderCart();
+        });
+      });
+
       const total = cart.reduce((sum, item) => sum + item.preco, 0);
       cartTotal.textContent = brl(total);
+      checkoutBtn.disabled = false;
+      checkoutBtn.style.opacity = '1';
+      checkoutBtn.style.cursor = 'pointer';
     }
 
     function renderTab(tab) {
@@ -770,15 +820,22 @@
       e.target.reset();
     });
 
-    document.querySelectorAll('#filterType, #filterSize, #filterPrice').forEach(el => {
-      el.addEventListener('change', renderProducts);
+    document.querySelectorAll('#filterType, #filterSize, #filterPrice, #filterSearch').forEach(el => {
+      const eventType = el.id === 'filterSearch' ? 'input' : 'change';
+      el.addEventListener(eventType, renderProducts);
     });
 
-    document.getElementById('checkoutBtn').addEventListener('click', () => {
+    checkoutBtn.addEventListener('click', () => {
       const total = cart.reduce((sum, item) => sum + item.preco, 0);
-      const items = cart.length ? cart.map(item => item.nome).join(', ') : 'sem itens';
+      const groupedNames = Object.values(cart.reduce((acc, item) => {
+        acc[item.id] ??= { nome: item.nome, qty: 0 };
+        acc[item.id].qty += 1;
+        return acc;
+      }, {})).map(item => `${item.nome} x${item.qty}`);
+
+      const items = groupedNames.length ? groupedNames.join(', ') : 'sem itens';
       const text = encodeURIComponent(`Olá! Quero fechar pedido na ChinelaMix. Itens: ${items}. Total estimado: ${brl(total)}.`);
-      window.open(`https://wa.me/5500000000000?text=${text}`, '_blank');
+      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, '_blank');
     });
 
     renderTab('feminino');
