@@ -3,150 +3,334 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chinela Azul & Verde</title>
+  <title>Chinela Wave 3D</title>
   <style>
     :root {
-      --azul: #0d6efd;
-      --verde: #1db954;
-      --escuro: #0f172a;
-      --claro: #f8fafc;
+      --azul: #0a7bff;
+      --azul-claro: #67c4ff;
+      --verde: #00d27a;
+      --verde-claro: #6dffbf;
+      --escuro: #071328;
+      --fundo: #020617;
+      --texto: #e2f9ff;
+      --texto-suave: #b6e7ff;
     }
 
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: Arial, sans-serif;
+      font-family: "Inter", "Segoe UI", Arial, sans-serif;
     }
 
     body {
-      background: linear-gradient(135deg, var(--azul), var(--verde));
       min-height: 100vh;
-      color: var(--claro);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
+      color: var(--texto);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(10, 123, 255, 0.35), transparent 40%),
+        radial-gradient(circle at 80% 10%, rgba(0, 210, 122, 0.25), transparent 35%),
+        linear-gradient(135deg, #020617 0%, #041331 45%, #072252 100%);
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      overflow-x: hidden;
     }
 
     .card {
-      width: 100%;
-      max-width: 900px;
-      background: rgba(15, 23, 42, 0.85);
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+      width: min(1080px, 100%);
+      background: rgba(7, 19, 40, 0.72);
+      border: 1px solid rgba(128, 211, 255, 0.25);
+      border-radius: 28px;
+      box-shadow: 0 40px 90px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      overflow: hidden;
+      perspective: 1000px;
+      transform-style: preserve-3d;
     }
 
-    .imagem {
-      background: radial-gradient(circle at top, #60a5fa, var(--azul));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 32px;
-    }
-
-    .chinela {
-      width: 230px;
-      height: 90px;
-      background: linear-gradient(90deg, #38bdf8, #22c55e);
-      border-radius: 50px;
-      transform: rotate(-10deg);
+    .visual {
       position: relative;
-      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35);
+      min-height: 430px;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 30% 25%, rgba(103, 196, 255, 0.25), transparent 45%),
+        radial-gradient(circle at 70% 70%, rgba(109, 255, 191, 0.2), transparent 50%);
+      overflow: hidden;
     }
 
-    .chinela::before,
-    .chinela::after {
+    .grid-3d {
+      position: absolute;
+      inset: -25%;
+      background:
+        linear-gradient(rgba(103, 196, 255, 0.17) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(103, 196, 255, 0.17) 1px, transparent 1px);
+      background-size: 32px 32px;
+      transform: rotateX(72deg) translateZ(-120px);
+      animation: flow 12s linear infinite;
+      opacity: 0.7;
+    }
+
+    @keyframes flow {
+      0% { transform: rotateX(72deg) translate3d(0, 0, -120px); }
+      100% { transform: rotateX(72deg) translate3d(0, 120px, -120px); }
+    }
+
+    .chinela-3d {
+      width: 280px;
+      height: 118px;
+      position: relative;
+      border-radius: 74px;
+      background: linear-gradient(110deg, var(--azul-claro), var(--verde));
+      transform-style: preserve-3d;
+      animation: flutuar 4.2s ease-in-out infinite;
+      box-shadow: 0 28px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    .chinela-3d::before {
       content: "";
       position: absolute;
-      top: -8px;
-      width: 88px;
-      height: 88px;
-      border: 10px solid #fff;
-      border-color: transparent transparent #fff transparent;
+      inset: 8px;
+      border-radius: 60px;
+      background: linear-gradient(120deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.04));
+      transform: translateZ(16px);
+      filter: blur(0.2px);
+    }
+
+    .chinela-3d::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 74px;
+      background: linear-gradient(120deg, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.36));
+      transform: translateZ(-14px);
+    }
+
+    .tira {
+      position: absolute;
+      top: -11px;
+      width: 114px;
+      height: 114px;
+      border: 14px solid rgba(255, 255, 255, 0.95);
+      border-color: transparent transparent rgba(255, 255, 255, 0.95) transparent;
       border-radius: 50%;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.28));
+      transform: translateZ(24px);
     }
 
-    .chinela::before {
-      left: 18px;
-      transform: rotate(18deg);
+    .tira.esquerda {
+      left: 20px;
+      transform: rotate(19deg) translateZ(24px);
     }
 
-    .chinela::after {
-      right: 18px;
-      transform: rotate(-18deg);
+    .tira.direita {
+      right: 20px;
+      transform: rotate(-19deg) translateZ(24px);
+    }
+
+    .sombra {
+      position: absolute;
+      width: 260px;
+      height: 54px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.5);
+      transform: translateY(92px) translateZ(-40px);
+      filter: blur(8px);
+      animation: sombra 4.2s ease-in-out infinite;
+    }
+
+    @keyframes flutuar {
+      0%, 100% { transform: rotateX(18deg) rotateY(-18deg) translateY(0) translateZ(12px); }
+      50% { transform: rotateX(24deg) rotateY(16deg) translateY(-16px) translateZ(12px); }
+    }
+
+    @keyframes sombra {
+      0%, 100% { transform: translateY(92px) scale(1) translateZ(-40px); opacity: .52; }
+      50% { transform: translateY(102px) scale(.88) translateZ(-40px); opacity: .38; }
     }
 
     .conteudo {
-      padding: 36px;
+      padding: 40px;
+      display: grid;
+      gap: 18px;
+      align-content: center;
+    }
+
+    .tag {
+      width: fit-content;
+      font-size: .85rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-weight: 700;
+      color: #042f2e;
+      background: linear-gradient(90deg, var(--verde-claro), #d9ffe7);
+      padding: 8px 14px;
+      border-radius: 999px;
     }
 
     h1 {
-      font-size: 2rem;
-      margin-bottom: 8px;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      line-height: 1.1;
     }
 
-    p {
-      opacity: 0.9;
-      margin-bottom: 20px;
-      line-height: 1.6;
+    .subtitulo {
+      color: var(--texto-suave);
+      line-height: 1.65;
+      max-width: 52ch;
     }
 
     .preco {
-      font-size: 2rem;
-      font-weight: bold;
-      color: #bbf7d0;
-      margin-bottom: 20px;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      font-weight: 700;
+    }
+
+    .preco strong {
+      font-size: 2.3rem;
+      color: #c8ffd6;
+    }
+
+    .preco span {
+      color: var(--texto-suave);
+      font-size: 1rem;
     }
 
     .beneficios {
       list-style: none;
-      margin-bottom: 28px;
+      display: grid;
+      gap: 10px;
+      color: #d2f6ff;
     }
 
     .beneficios li {
-      margin-bottom: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(171, 227, 255, 0.2);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .especificacoes {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(90px, 1fr));
+      gap: 10px;
+    }
+
+    .spec {
+      background: rgba(2, 10, 20, 0.45);
+      border: 1px solid rgba(171, 227, 255, 0.2);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .spec b {
+      display: block;
+      font-size: 1.2rem;
+      margin-bottom: 4px;
+    }
+
+    .acoes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
     button {
-      background: linear-gradient(90deg, var(--azul), var(--verde));
-      color: #fff;
       border: none;
-      padding: 14px 22px;
-      font-size: 1rem;
-      border-radius: 10px;
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-weight: 700;
       cursor: pointer;
-      transition: transform 0.2s ease;
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+    .btn-principal {
+      color: #03212c;
+      background: linear-gradient(90deg, #b8fff6, #8cffc0);
+      box-shadow: 0 12px 26px rgba(16, 185, 129, 0.35);
+    }
+
+    .btn-secundario {
+      color: var(--texto);
+      background: transparent;
+      border: 1px solid rgba(157, 225, 255, 0.45);
     }
 
     button:hover {
-      transform: translateY(-2px);
+      transform: translateY(-3px);
+    }
+
+    .btn-principal:hover {
+      box-shadow: 0 16px 28px rgba(16, 185, 129, 0.4);
+    }
+
+    @media (max-width: 740px) {
+      .conteudo { padding: 28px; }
+      .visual { min-height: 340px; }
+      .chinela-3d { transform: scale(.9); }
+      .especificacoes { grid-template-columns: repeat(2, minmax(90px, 1fr)); }
     }
   </style>
 </head>
 <body>
-  <main class="card">
-    <section class="imagem" aria-label="Imagem ilustrativa da chinela azul e verde">
-      <div class="chinela"></div>
+  <main class="card" id="card3d">
+    <section class="visual" aria-label="Visual 3D animado da chinela azul e verde">
+      <div class="grid-3d" aria-hidden="true"></div>
+      <div class="sombra" aria-hidden="true"></div>
+      <div class="chinela-3d" aria-label="Modelo da chinela em 3D">
+        <span class="tira esquerda"></span>
+        <span class="tira direita"></span>
+      </div>
     </section>
 
     <section class="conteudo">
-      <h1>Chinela Azul & Verde</h1>
-      <p>
-        Conforto, estilo e cor para o seu dia. A chinela perfeita para praia, passeio ou casa,
-        com design moderno nas cores azul e verde.
+      <span class="tag">Lançamento 2026</span>
+      <h1>Chinela Wave 3D Azul & Verde</h1>
+      <p class="subtitulo">
+        Agora com interface 3D animada, acabamento premium e palmilha anatômica em EVA de alta densidade.
+        A Chinela Wave 3D combina conforto extremo, visual moderno e segurança para uso diário.
       </p>
-      <div class="preco">R$ 49,90</div>
+
+      <div class="preco">
+        <strong>R$ 59,90</strong>
+        <span>ou 6x de R$ 9,98 sem juros</span>
+      </div>
+
       <ul class="beneficios">
-        <li>✅ Solado antiderrapante</li>
-        <li>✅ Material macio e resistente</li>
-        <li>✅ Leve, confortável e fácil de limpar</li>
+        <li>✅ Solado com tração multidirecional para piso molhado.</li>
+        <li>✅ Tiras reforçadas com toque macio e encaixe firme.</li>
+        <li>✅ Tecnologia DryFlex: seca rápido e não retém odores.</li>
       </ul>
-      <button>Comprar agora</button>
+
+      <div class="especificacoes" aria-label="Especificações rápidas">
+        <div class="spec"><b>34–43</b><small>Tamanhos</small></div>
+        <div class="spec"><b>220g</b><small>Peso médio</small></div>
+        <div class="spec"><b>4.9★</b><small>Avaliação</small></div>
+      </div>
+
+      <div class="acoes">
+        <button class="btn-principal">Comprar agora</button>
+        <button class="btn-secundario">Ver tabela de tamanhos</button>
+      </div>
     </section>
   </main>
+
+  <script>
+    const card = document.getElementById('card3d');
+
+    card.addEventListener('pointermove', (event) => {
+      const bounds = card.getBoundingClientRect();
+      const x = ((event.clientX - bounds.left) / bounds.width) - 0.5;
+      const y = ((event.clientY - bounds.top) / bounds.height) - 0.5;
+      card.style.transform = `rotateY(${x * 6}deg) rotateX(${y * -5}deg)`;
+    });
+
+    card.addEventListener('pointerleave', () => {
+      card.style.transform = 'rotateY(0deg) rotateX(0deg)';
+    });
+  </script>
 </body>
 </html>
