@@ -3,334 +3,605 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chinela Wave 3D</title>
+  <title>HyperNova Systems | Plataforma Corporativa</title>
   <style>
     :root {
-      --azul: #0a7bff;
-      --azul-claro: #67c4ff;
-      --verde: #00d27a;
-      --verde-claro: #6dffbf;
-      --escuro: #071328;
-      --fundo: #020617;
-      --texto: #e2f9ff;
-      --texto-suave: #b6e7ff;
+      --bg: #060b1a;
+      --bg-soft: #0d1633;
+      --text: #eaf2ff;
+      --muted: #a2b6dd;
+      --primary: #41c3ff;
+      --primary-2: #61ffc9;
+      --card: rgba(12, 20, 44, 0.7);
+      --line: rgba(132, 168, 255, 0.22);
+      --danger: #ff6a8e;
+      --success: #50f5b5;
+      --shadow: 0 16px 40px rgba(0, 0, 0, 0.38);
+      --radius: 18px;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: "Inter", "Segoe UI", Arial, sans-serif;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Inter, Segoe UI, Arial, sans-serif; }
 
     body {
-      min-height: 100vh;
-      color: var(--texto);
+      color: var(--text);
       background:
-        radial-gradient(circle at 20% 20%, rgba(10, 123, 255, 0.35), transparent 40%),
-        radial-gradient(circle at 80% 10%, rgba(0, 210, 122, 0.25), transparent 35%),
-        linear-gradient(135deg, #020617 0%, #041331 45%, #072252 100%);
-      display: grid;
-      place-items: center;
-      padding: 28px;
+        radial-gradient(circle at 12% 8%, rgba(65, 195, 255, 0.22), transparent 30%),
+        radial-gradient(circle at 92% 20%, rgba(97, 255, 201, 0.2), transparent 30%),
+        linear-gradient(135deg, #050915, #0a132b 48%, #091b3d);
+      min-height: 100vh;
       overflow-x: hidden;
     }
 
-    .card {
-      width: min(1080px, 100%);
-      background: rgba(7, 19, 40, 0.72);
-      border: 1px solid rgba(128, 211, 255, 0.25);
-      border-radius: 28px;
-      box-shadow: 0 40px 90px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    .container { width: min(1180px, 92%); margin: 0 auto; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
       backdrop-filter: blur(10px);
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      overflow: hidden;
-      perspective: 1000px;
-      transform-style: preserve-3d;
+      border-bottom: 1px solid rgba(184, 220, 255, 0.12);
+      background: rgba(4, 8, 20, 0.58);
     }
 
-    .visual {
-      position: relative;
-      min-height: 430px;
-      display: grid;
-      place-items: center;
-      background:
-        radial-gradient(circle at 30% 25%, rgba(103, 196, 255, 0.25), transparent 45%),
-        radial-gradient(circle at 70% 70%, rgba(109, 255, 191, 0.2), transparent 50%);
-      overflow: hidden;
-    }
-
-    .grid-3d {
-      position: absolute;
-      inset: -25%;
-      background:
-        linear-gradient(rgba(103, 196, 255, 0.17) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(103, 196, 255, 0.17) 1px, transparent 1px);
-      background-size: 32px 32px;
-      transform: rotateX(72deg) translateZ(-120px);
-      animation: flow 12s linear infinite;
-      opacity: 0.7;
-    }
-
-    @keyframes flow {
-      0% { transform: rotateX(72deg) translate3d(0, 0, -120px); }
-      100% { transform: rotateX(72deg) translate3d(0, 120px, -120px); }
-    }
-
-    .chinela-3d {
-      width: 280px;
-      height: 118px;
-      position: relative;
-      border-radius: 74px;
-      background: linear-gradient(110deg, var(--azul-claro), var(--verde));
-      transform-style: preserve-3d;
-      animation: flutuar 4.2s ease-in-out infinite;
-      box-shadow: 0 28px 40px rgba(0, 0, 0, 0.45);
-    }
-
-    .chinela-3d::before {
-      content: "";
-      position: absolute;
-      inset: 8px;
-      border-radius: 60px;
-      background: linear-gradient(120deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.04));
-      transform: translateZ(16px);
-      filter: blur(0.2px);
-    }
-
-    .chinela-3d::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: 74px;
-      background: linear-gradient(120deg, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.36));
-      transform: translateZ(-14px);
-    }
-
-    .tira {
-      position: absolute;
-      top: -11px;
-      width: 114px;
-      height: 114px;
-      border: 14px solid rgba(255, 255, 255, 0.95);
-      border-color: transparent transparent rgba(255, 255, 255, 0.95) transparent;
-      border-radius: 50%;
-      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.28));
-      transform: translateZ(24px);
-    }
-
-    .tira.esquerda {
-      left: 20px;
-      transform: rotate(19deg) translateZ(24px);
-    }
-
-    .tira.direita {
-      right: 20px;
-      transform: rotate(-19deg) translateZ(24px);
-    }
-
-    .sombra {
-      position: absolute;
-      width: 260px;
-      height: 54px;
-      border-radius: 50%;
-      background: rgba(0, 0, 0, 0.5);
-      transform: translateY(92px) translateZ(-40px);
-      filter: blur(8px);
-      animation: sombra 4.2s ease-in-out infinite;
-    }
-
-    @keyframes flutuar {
-      0%, 100% { transform: rotateX(18deg) rotateY(-18deg) translateY(0) translateZ(12px); }
-      50% { transform: rotateX(24deg) rotateY(16deg) translateY(-16px) translateZ(12px); }
-    }
-
-    @keyframes sombra {
-      0%, 100% { transform: translateY(92px) scale(1) translateZ(-40px); opacity: .52; }
-      50% { transform: translateY(102px) scale(.88) translateZ(-40px); opacity: .38; }
-    }
-
-    .conteudo {
-      padding: 40px;
-      display: grid;
-      gap: 18px;
-      align-content: center;
-    }
-
-    .tag {
-      width: fit-content;
-      font-size: .85rem;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      font-weight: 700;
-      color: #042f2e;
-      background: linear-gradient(90deg, var(--verde-claro), #d9ffe7);
-      padding: 8px 14px;
-      border-radius: 999px;
-    }
-
-    h1 {
-      font-size: clamp(2rem, 4vw, 2.8rem);
-      line-height: 1.1;
-    }
-
-    .subtitulo {
-      color: var(--texto-suave);
-      line-height: 1.65;
-      max-width: 52ch;
-    }
-
-    .preco {
+    .navbar {
       display: flex;
-      align-items: baseline;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      gap: 20px;
+    }
+
+    .logo {
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
       gap: 10px;
-      font-weight: 700;
     }
 
-    .preco strong {
-      font-size: 2.3rem;
-      color: #c8ffd6;
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: linear-gradient(90deg, var(--primary), var(--primary-2));
+      box-shadow: 0 0 15px var(--primary);
     }
 
-    .preco span {
-      color: var(--texto-suave);
-      font-size: 1rem;
+    nav ul { list-style: none; display: flex; gap: 18px; flex-wrap: wrap; }
+    nav button {
+      background: transparent;
+      color: var(--muted);
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
     }
+    nav button:hover { color: white; }
 
-    .beneficios {
-      list-style: none;
+    .hero {
+      padding: 70px 0 50px;
       display: grid;
-      gap: 10px;
-      color: #d2f6ff;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 28px;
+      align-items: stretch;
     }
 
-    .beneficios li {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(171, 227, 255, 0.2);
+    .badge {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: #bbd8ff;
+      font-size: 0.84rem;
+      margin-bottom: 16px;
+    }
+
+    h1 { font-size: clamp(2rem, 4.8vw, 3.6rem); line-height: 1.05; margin-bottom: 16px; }
+    .hero p { color: var(--muted); line-height: 1.7; max-width: 55ch; }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      margin: 24px 0 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
       border-radius: 12px;
-      padding: 12px 14px;
+      padding: 13px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .25s ease;
     }
 
-    .especificacoes {
+    .btn-primary {
+      color: #022;
+      background: linear-gradient(90deg, var(--primary), var(--primary-2));
+      box-shadow: 0 12px 30px rgba(65, 195, 255, 0.3);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+
+    .stats {
       display: grid;
       grid-template-columns: repeat(3, minmax(90px, 1fr));
       gap: 10px;
+      margin-top: 16px;
     }
 
-    .spec {
-      background: rgba(2, 10, 20, 0.45);
-      border: 1px solid rgba(171, 227, 255, 0.2);
-      border-radius: 12px;
+    .stat {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
       padding: 12px;
-      text-align: center;
+      box-shadow: var(--shadow);
     }
 
-    .spec b {
-      display: block;
-      font-size: 1.2rem;
-      margin-bottom: 4px;
+    .stat b { display: block; font-size: 1.2rem; }
+    .stat span { color: var(--muted); font-size: 0.86rem; }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow);
     }
 
-    .acoes {
+    .panel h3 { margin-bottom: 12px; }
+    .panel ul { list-style: none; display: grid; gap: 10px; }
+    .panel li {
+      border: 1px solid rgba(117, 181, 255, 0.18);
+      background: rgba(8, 16, 34, 0.74);
+      border-radius: 12px;
+      padding: 10px;
+      font-size: 0.94rem;
+      color: #c8dcff;
+    }
+
+    section { padding: 30px 0; }
+    .section-title { margin-bottom: 16px; font-size: clamp(1.4rem, 3vw, 2rem); }
+    .section-sub { color: var(--muted); margin-bottom: 24px; }
+
+    .services {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .service-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      transition: .25s ease;
+    }
+
+    .service-card:hover { transform: translateY(-4px); border-color: rgba(97,255,201,0.44); }
+    .service-card p { color: var(--muted); margin-top: 8px; line-height: 1.55; }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .tab-btn {
+      border: 1px solid var(--line);
+      background: rgba(6, 14, 31, 0.8);
+      color: #cfe0ff;
+      border-radius: 10px;
+      padding: 9px 12px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .tab-btn.active { background: linear-gradient(90deg, rgba(65,195,255,0.2), rgba(97,255,201,0.2)); }
+
+    .tab-content {
+      border: 1px solid var(--line);
+      background: rgba(8, 15, 34, 0.74);
+      border-radius: 12px;
+      padding: 14px;
+      min-height: 176px;
+    }
+
+    .kpi-list { list-style: none; display: grid; gap: 8px; }
+    .kpi-list li {
       display: flex;
-      flex-wrap: wrap;
+      justify-content: space-between;
+      background: rgba(11, 23, 48, 0.85);
+      border: 1px solid rgba(123, 178, 255, 0.18);
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .switch-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      gap: 8px;
+    }
+
+    .toggle {
+      width: 62px;
+      height: 34px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.16);
+      border: 1px solid var(--line);
+      position: relative;
+      cursor: pointer;
+    }
+
+    .toggle::after {
+      content: "";
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #fff;
+      position: absolute;
+      top: 3px;
+      left: 4px;
+      transition: .2s ease;
+    }
+
+    .toggle.on::after { left: 30px; }
+
+    .pricing {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 12px;
     }
 
-    button {
-      border: none;
-      padding: 14px 24px;
+    .price-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .price {
+      font-size: 1.8rem;
+      margin: 10px 0;
+      font-weight: 800;
+    }
+
+    .price small { color: var(--muted); font-size: 0.88rem; font-weight: 500; }
+
+    .faq-item {
+      border: 1px solid var(--line);
       border-radius: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform .25s ease, box-shadow .25s ease;
+      margin-bottom: 10px;
+      overflow: hidden;
+      background: rgba(9, 18, 40, 0.7);
     }
 
-    .btn-principal {
-      color: #03212c;
-      background: linear-gradient(90deg, #b8fff6, #8cffc0);
-      box-shadow: 0 12px 26px rgba(16, 185, 129, 0.35);
-    }
-
-    .btn-secundario {
-      color: var(--texto);
+    .faq-q {
+      width: 100%;
       background: transparent;
-      border: 1px solid rgba(157, 225, 255, 0.45);
+      border: none;
+      color: var(--text);
+      text-align: left;
+      padding: 14px;
+      cursor: pointer;
+      font-weight: 700;
     }
 
-    button:hover {
-      transform: translateY(-3px);
+    .faq-a { color: var(--muted); padding: 0 14px 14px; display: none; line-height: 1.6; }
+    .faq-item.open .faq-a { display: block; }
+
+    .contact-form {
+      display: grid;
+      gap: 10px;
+      max-width: 650px;
     }
 
-    .btn-principal:hover {
-      box-shadow: 0 16px 28px rgba(16, 185, 129, 0.4);
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: rgba(8, 17, 37, 0.7);
+      color: #fff;
     }
 
-    @media (max-width: 740px) {
-      .conteudo { padding: 28px; }
-      .visual { min-height: 340px; }
-      .chinela-3d { transform: scale(.9); }
-      .especificacoes { grid-template-columns: repeat(2, minmax(90px, 1fr)); }
+    textarea { min-height: 110px; resize: vertical; }
+
+    .notice {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      display: none;
+    }
+
+    .notice.ok { display: block; border: 1px solid rgba(80,245,181,0.35); color: var(--success); }
+
+    footer {
+      border-top: 1px solid var(--line);
+      margin-top: 40px;
+      padding: 24px 0 30px;
+      color: #9cb3df;
+      font-size: 0.9rem;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 16, 0.74);
+      display: none;
+      place-items: center;
+      z-index: 40;
+      padding: 16px;
+    }
+
+    .modal.show { display: grid; }
+
+    .modal-box {
+      width: min(520px, 100%);
+      background: #0c1733;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .close {
+      float: right;
+      border: none;
+      background: transparent;
+      color: #fff;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    @media (max-width: 860px) {
+      .hero, .workspace { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <main class="card" id="card3d">
-    <section class="visual" aria-label="Visual 3D animado da chinela azul e verde">
-      <div class="grid-3d" aria-hidden="true"></div>
-      <div class="sombra" aria-hidden="true"></div>
-      <div class="chinela-3d" aria-label="Modelo da chinela em 3D">
-        <span class="tira esquerda"></span>
-        <span class="tira direita"></span>
+  <header>
+    <div class="container navbar">
+      <div class="logo"><span class="dot"></span> HyperNova Systems</div>
+      <nav>
+        <ul>
+          <li><button data-scroll="servicos">Serviços</button></li>
+          <li><button data-scroll="plataforma">Plataforma</button></li>
+          <li><button data-scroll="planos">Planos</button></li>
+          <li><button data-scroll="faq">FAQ</button></li>
+          <li><button data-scroll="contato">Contato</button></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" id="topo">
+      <div>
+        <span class="badge">Empresa Global • Segurança Enterprise • IA Integrada</span>
+        <h1>Site corporativo de nível gigante com recursos reais e interativos</h1>
+        <p>
+          Plataforma moderna para operação, análise e atendimento multicanal. Com painéis dinâmicos,
+          planos inteligentes e automações que elevam a performance da sua empresa.
+        </p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" id="openDemo">Agendar demonstração</button>
+          <button class="btn btn-secondary" data-scroll="plataforma">Explorar dashboard</button>
+        </div>
+        <div class="stats">
+          <div class="stat"><b>99,99%</b><span>Uptime anual</span></div>
+          <div class="stat"><b>+180</b><span>Países atendidos</span></div>
+          <div class="stat"><b>24/7</b><span>Suporte dedicado</span></div>
+        </div>
+      </div>
+
+      <aside class="panel">
+        <h3>Recursos em destaque</h3>
+        <ul>
+          <li>✅ CRM unificado com automações e IA de previsão.</li>
+          <li>✅ Gestão financeira, compliance e auditoria em tempo real.</li>
+          <li>✅ Portal de clientes com SLA e trilha de atendimento.</li>
+          <li>✅ Integração com APIs, ERPs e ferramentas de marketing.</li>
+        </ul>
+      </aside>
+    </section>
+
+    <section id="servicos">
+      <h2 class="section-title">Serviços de alta performance</h2>
+      <p class="section-sub">Escolha módulos que conectam operação, vendas, dados e experiência do cliente.</p>
+      <div class="services">
+        <article class="service-card"><h3>Cloud Enterprise</h3><p>Escalabilidade automática, múltiplas regiões e backup contínuo.</p></article>
+        <article class="service-card"><h3>Cyber Security</h3><p>Firewall inteligente, SSO, MFA e monitoramento avançado de ameaças.</p></article>
+        <article class="service-card"><h3>Data Intelligence</h3><p>Modelos preditivos, KPIs em tempo real e visualização interativa.</p></article>
+        <article class="service-card"><h3>Automação de Processos</h3><p>Fluxos no-code e gatilhos para reduzir tarefas manuais em escala.</p></article>
       </div>
     </section>
 
-    <section class="conteudo">
-      <span class="tag">Lançamento 2026</span>
-      <h1>Chinela Wave 3D Azul & Verde</h1>
-      <p class="subtitulo">
-        Agora com interface 3D animada, acabamento premium e palmilha anatômica em EVA de alta densidade.
-        A Chinela Wave 3D combina conforto extremo, visual moderno e segurança para uso diário.
-      </p>
+    <section id="plataforma">
+      <h2 class="section-title">Plataforma funcional e clicável</h2>
+      <p class="section-sub">Navegue entre módulos e veja métricas atualizadas de acordo com o contexto.</p>
+      <div class="workspace">
+        <div class="panel">
+          <div class="tabs">
+            <button class="tab-btn active" data-tab="vendas">Vendas</button>
+            <button class="tab-btn" data-tab="operacoes">Operações</button>
+            <button class="tab-btn" data-tab="suporte">Suporte</button>
+          </div>
+          <div class="tab-content" id="tabContent"></div>
+        </div>
 
-      <div class="preco">
-        <strong>R$ 59,90</strong>
-        <span>ou 6x de R$ 9,98 sem juros</span>
+        <div class="panel" id="planos">
+          <div class="switch-row">
+            <div>
+              <h3>Planos corporativos</h3>
+              <small style="color: var(--muted)">Alterne entre cobrança mensal e anual.</small>
+            </div>
+            <button class="toggle" id="billingToggle" aria-label="Alternar cobrança"></button>
+          </div>
+          <div class="pricing" id="pricingGrid"></div>
+        </div>
       </div>
+    </section>
 
-      <ul class="beneficios">
-        <li>✅ Solado com tração multidirecional para piso molhado.</li>
-        <li>✅ Tiras reforçadas com toque macio e encaixe firme.</li>
-        <li>✅ Tecnologia DryFlex: seca rápido e não retém odores.</li>
-      </ul>
-
-      <div class="especificacoes" aria-label="Especificações rápidas">
-        <div class="spec"><b>34–43</b><small>Tamanhos</small></div>
-        <div class="spec"><b>220g</b><small>Peso médio</small></div>
-        <div class="spec"><b>4.9★</b><small>Avaliação</small></div>
+    <section id="faq">
+      <h2 class="section-title">Perguntas frequentes</h2>
+      <div class="faq-item">
+        <button class="faq-q">Quanto tempo para implementação?</button>
+        <div class="faq-a">Em média de 2 a 6 semanas, dependendo do volume de integrações e personalizações.</div>
       </div>
-
-      <div class="acoes">
-        <button class="btn-principal">Comprar agora</button>
-        <button class="btn-secundario">Ver tabela de tamanhos</button>
+      <div class="faq-item">
+        <button class="faq-q">Posso integrar com meu ERP atual?</button>
+        <div class="faq-a">Sim. A plataforma possui conectores prontos e APIs REST para fluxos customizados.</div>
       </div>
+      <div class="faq-item">
+        <button class="faq-q">Existe suporte para equipes globais?</button>
+        <div class="faq-a">Sim, com suporte 24/7, multi-idioma e monitoramento de SLAs em tempo real.</div>
+      </div>
+    </section>
+
+    <section id="contato">
+      <h2 class="section-title">Fale com especialistas</h2>
+      <p class="section-sub">Preencha o formulário e receba um plano estratégico para sua empresa.</p>
+      <form class="contact-form" id="leadForm">
+        <input type="text" name="nome" placeholder="Nome completo" required />
+        <input type="email" name="email" placeholder="E-mail corporativo" required />
+        <select name="porte" required>
+          <option value="">Selecione o porte da empresa</option>
+          <option>Startup</option>
+          <option>Média Empresa</option>
+          <option>Grande Empresa</option>
+          <option>Enterprise Global</option>
+        </select>
+        <textarea name="objetivo" placeholder="Descreva o principal objetivo tecnológico" required></textarea>
+        <button class="btn btn-primary" type="submit">Enviar solicitação</button>
+      </form>
+      <div class="notice" id="formNotice">Recebemos sua solicitação. Nosso time entrará em contato em breve.</div>
     </section>
   </main>
 
+  <footer>
+    <div class="container">© 2026 HyperNova Systems — Soluções tecnológicas de alto impacto para empresas de grande escala.</div>
+  </footer>
+
+  <div class="modal" id="demoModal" aria-hidden="true">
+    <div class="modal-box">
+      <button class="close" id="closeDemo" aria-label="Fechar">✕</button>
+      <h3 style="margin-bottom: 8px">Demo agendada</h3>
+      <p style="color: var(--muted); line-height: 1.6;">Nossa equipe comercial vai entrar em contato para uma demonstração personalizada com foco em ROI, escala e segurança.</p>
+      <button class="btn btn-primary" style="margin-top: 14px" id="confirmDemo">Perfeito, continuar</button>
+    </div>
+  </div>
+
   <script>
-    const card = document.getElementById('card3d');
+    const tabData = {
+      vendas: [
+        ["Pipeline ativo", "R$ 12,4M"],
+        ["Conversão média", "31,8%"],
+        ["CAC otimizado", "-18%"],
+        ["Receita recorrente", "+42%"]
+      ],
+      operacoes: [
+        ["Projetos em execução", "68"],
+        ["SLA cumprido", "97,3%"],
+        ["Tempo médio de ciclo", "4,1 dias"],
+        ["Produtividade", "+26%"]
+      ],
+      suporte: [
+        ["Tickets resolvidos", "12.903"],
+        ["CSAT", "96/100"],
+        ["Tempo de primeira resposta", "2m 40s"],
+        ["Automação de atendimento", "63%"]
+      ]
+    };
 
-    card.addEventListener('pointermove', (event) => {
-      const bounds = card.getBoundingClientRect();
-      const x = ((event.clientX - bounds.left) / bounds.width) - 0.5;
-      const y = ((event.clientY - bounds.top) / bounds.height) - 0.5;
-      card.style.transform = `rotateY(${x * 6}deg) rotateX(${y * -5}deg)`;
+    const pricingData = {
+      mensal: [
+        { nome: "Start", valor: "R$ 799", obs: "/mês" },
+        { nome: "Growth", valor: "R$ 2.490", obs: "/mês" },
+        { nome: "Enterprise", valor: "Sob consulta", obs: "custom" }
+      ],
+      anual: [
+        { nome: "Start", valor: "R$ 699", obs: "/mês no anual" },
+        { nome: "Growth", valor: "R$ 2.090", obs: "/mês no anual" },
+        { nome: "Enterprise", valor: "Sob consulta", obs: "custom" }
+      ]
+    };
+
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContent = document.getElementById('tabContent');
+    const pricingGrid = document.getElementById('pricingGrid');
+    const billingToggle = document.getElementById('billingToggle');
+    const notice = document.getElementById('formNotice');
+
+    function renderTab(tab) {
+      const rows = tabData[tab]
+        .map(([label, value]) => `<li><span>${label}</span><strong>${value}</strong></li>`)
+        .join('');
+      tabContent.innerHTML = `<ul class="kpi-list">${rows}</ul>`;
+    }
+
+    function renderPricing(type) {
+      pricingGrid.innerHTML = pricingData[type].map(plan => `
+        <article class="price-card">
+          <h4>${plan.nome}</h4>
+          <div class="price">${plan.valor}</div>
+          <small>${plan.obs}</small>
+          <button class="btn btn-secondary" style="margin-top: 12px; width: 100%;">Selecionar plano</button>
+        </article>
+      `).join('');
+    }
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderTab(btn.dataset.tab);
+      });
     });
 
-    card.addEventListener('pointerleave', () => {
-      card.style.transform = 'rotateY(0deg) rotateX(0deg)';
+    let yearly = false;
+    billingToggle.addEventListener('click', () => {
+      yearly = !yearly;
+      billingToggle.classList.toggle('on', yearly);
+      renderPricing(yearly ? 'anual' : 'mensal');
     });
+
+    document.querySelectorAll('.faq-q').forEach(question => {
+      question.addEventListener('click', () => {
+        question.parentElement.classList.toggle('open');
+      });
+    });
+
+    document.querySelectorAll('[data-scroll]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.scroll;
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    const demoModal = document.getElementById('demoModal');
+    document.getElementById('openDemo').addEventListener('click', () => demoModal.classList.add('show'));
+    document.getElementById('closeDemo').addEventListener('click', () => demoModal.classList.remove('show'));
+    document.getElementById('confirmDemo').addEventListener('click', () => demoModal.classList.remove('show'));
+
+    document.getElementById('leadForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      notice.classList.add('ok');
+      e.target.reset();
+    });
+
+    renderTab('vendas');
+    renderPricing('mensal');
   </script>
 </body>
 </html>
