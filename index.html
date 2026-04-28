@@ -306,6 +306,61 @@
       max-width: 650px;
     }
 
+    .showcase {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .grid-products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .product-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: rgba(7, 16, 36, 0.82);
+    }
+
+    .product-card p {
+      color: var(--muted);
+      margin: 6px 0 10px;
+      font-size: 0.9rem;
+    }
+
+    .tiny {
+      font-size: .85rem;
+      color: var(--muted);
+    }
+
+    .cart-lines {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .cart-lines li {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      border: 1px solid rgba(123, 178, 255, 0.2);
+      border-radius: 10px;
+      padding: 9px;
+      font-size: .92rem;
+    }
+
     input, select, textarea {
       width: 100%;
       padding: 12px;
@@ -365,7 +420,8 @@
     }
 
     @media (max-width: 860px) {
-      .hero, .workspace { grid-template-columns: 1fr; }
+      .hero, .workspace, .showcase { grid-template-columns: 1fr; }
+      .filters { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -450,6 +506,46 @@
           </div>
           <div class="pricing" id="pricingGrid"></div>
         </div>
+      </div>
+    </section>
+
+    <section id="super-loja">
+      <h2 class="section-title">Super melhoria: provador inteligente + carrinho rápido</h2>
+      <p class="section-sub">Filtre por categoria, tamanho e faixa de preço para montar seu pedido em segundos.</p>
+      <div class="showcase">
+        <div class="panel">
+          <div class="filters">
+            <select id="filterType">
+              <option value="todos">Todos os tipos</option>
+              <option value="classica">Clássica</option>
+              <option value="slide">Slide</option>
+              <option value="ortopedica">Ortopédica</option>
+              <option value="infantil">Infantil</option>
+            </select>
+            <select id="filterSize">
+              <option value="todos">Todos os tamanhos</option>
+              <option value="33-36">33-36</option>
+              <option value="37-40">37-40</option>
+              <option value="41-44">41-44</option>
+            </select>
+            <select id="filterPrice">
+              <option value="todos">Qualquer preço</option>
+              <option value="ate50">Até R$ 50</option>
+              <option value="ate80">Até R$ 80</option>
+              <option value="acima80">Acima de R$ 80</option>
+            </select>
+          </div>
+          <div class="grid-products" id="productGrid"></div>
+        </div>
+
+        <aside class="panel">
+          <h3>Seu carrinho inteligente</h3>
+          <p class="tiny">Adicione pares direto do catálogo e gere um resumo para atendimento mais rápido.</p>
+          <ul class="cart-lines" id="cartLines"></ul>
+          <p class="tiny">Subtotal</p>
+          <div class="price" id="cartTotal">R$ 0,00</div>
+          <button class="btn btn-primary" id="checkoutBtn" style="width: 100%;">Finalizar no WhatsApp</button>
+        </aside>
       </div>
     </section>
 
@@ -542,6 +638,80 @@
     const pricingGrid = document.getElementById('pricingGrid');
     const billingToggle = document.getElementById('billingToggle');
     const notice = document.getElementById('formNotice');
+    const productGrid = document.getElementById('productGrid');
+    const cartLines = document.getElementById('cartLines');
+    const cartTotal = document.getElementById('cartTotal');
+
+    const productData = [
+      { id: 1, nome: 'Chinela Oceano', tipo: 'classica', tamanho: '37-40', preco: 49.9, selo: 'Conforto diário' },
+      { id: 2, nome: 'Slide Pulse', tipo: 'slide', tamanho: '41-44', preco: 69.9, selo: 'Antiderrapante' },
+      { id: 3, nome: 'Nuvem Anatômica', tipo: 'ortopedica', tamanho: '37-40', preco: 89.9, selo: 'Apoio extra' },
+      { id: 4, nome: 'Kids Splash', tipo: 'infantil', tamanho: '33-36', preco: 39.9, selo: 'Leve e colorida' },
+      { id: 5, nome: 'Brisa Summer', tipo: 'classica', tamanho: '33-36', preco: 44.9, selo: 'Secagem rápida' },
+      { id: 6, nome: 'Urban Slide Pro', tipo: 'slide', tamanho: '37-40', preco: 79.9, selo: 'Linha premium' }
+    ];
+
+    const cart = [];
+
+    function brl(value) {
+      return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function filteredProducts() {
+      const type = document.getElementById('filterType').value;
+      const size = document.getElementById('filterSize').value;
+      const price = document.getElementById('filterPrice').value;
+
+      return productData.filter(item => {
+        const typeOk = type === 'todos' || item.tipo === type;
+        const sizeOk = size === 'todos' || item.tamanho === size;
+        const priceOk = price === 'todos'
+          || (price === 'ate50' && item.preco <= 50)
+          || (price === 'ate80' && item.preco <= 80)
+          || (price === 'acima80' && item.preco > 80);
+        return typeOk && sizeOk && priceOk;
+      });
+    }
+
+    function renderProducts() {
+      const items = filteredProducts();
+      productGrid.innerHTML = items.length
+        ? items.map(item => `
+          <article class="product-card">
+            <h4>${item.nome}</h4>
+            <p>${item.selo} • Tam ${item.tamanho}</p>
+            <strong>${brl(item.preco)}</strong>
+            <button class="btn btn-secondary add-cart" data-id="${item.id}" style="margin-top: 10px; width: 100%;">Adicionar</button>
+          </article>
+        `).join('')
+        : '<p class="tiny">Nenhum modelo encontrado nesse filtro. Tente outra combinação.</p>';
+
+      document.querySelectorAll('.add-cart').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = Number(btn.dataset.id);
+          const product = productData.find(p => p.id === id);
+          cart.push(product);
+          renderCart();
+        });
+      });
+    }
+
+    function renderCart() {
+      if (!cart.length) {
+        cartLines.innerHTML = '<li><span>Nenhum item ainda</span><strong>—</strong></li>';
+        cartTotal.textContent = 'R$ 0,00';
+        return;
+      }
+
+      cartLines.innerHTML = cart.map((item, index) => `
+        <li>
+          <span>${item.nome}</span>
+          <strong>${brl(item.preco)}</strong>
+        </li>
+      `).join('');
+      const total = cart.reduce((sum, item) => sum + item.preco, 0);
+      cartTotal.textContent = brl(total);
+    }
 
     function renderTab(tab) {
       const rows = tabData[tab]
@@ -600,8 +770,21 @@
       e.target.reset();
     });
 
+    document.querySelectorAll('#filterType, #filterSize, #filterPrice').forEach(el => {
+      el.addEventListener('change', renderProducts);
+    });
+
+    document.getElementById('checkoutBtn').addEventListener('click', () => {
+      const total = cart.reduce((sum, item) => sum + item.preco, 0);
+      const items = cart.length ? cart.map(item => item.nome).join(', ') : 'sem itens';
+      const text = encodeURIComponent(`Olá! Quero fechar pedido na ChinelaMix. Itens: ${items}. Total estimado: ${brl(total)}.`);
+      window.open(`https://wa.me/5500000000000?text=${text}`, '_blank');
+    });
+
     renderTab('feminino');
     renderPricing('mensal');
+    renderProducts();
+    renderCart();
   </script>
 </body>
 </html>
